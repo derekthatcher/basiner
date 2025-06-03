@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Basiner</title>
+  <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Scope boulders in the basin">
+  <meta name="keywords"
+    content="Ewbank, climbing grades, sport climbing, grade converter, climbing scale, Australia, New Zealand, climbing tool">
+  <meta name="author" content="Derek Thatcher @ castlehillbasin.co.nz">
+  <meta property="og:image" content="chb.png" />
+  <meta property="og:image:secure_url" content="chb.png" />
+  <meta name="MobileOptimized" content="width" />
+  <meta name="HandheldFriendly" content="true" />
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Barlow|Barlow+Condensed|Barlow+Semi+Condensed&display=swap');
+
+    body {
+      margin: 0;
+    }
+
+    #seadragon-viewer {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="seadragon-viewer"></div>
+  <script src="//openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
+  <script>
+
+    var viewer = OpenSeadragon({
+      id: "seadragon-viewer",
+      prefixUrl: "//openseadragon.github.io/openseadragon/images/",
+      tileSources: ["kuratawhiti/tiles.dzi", "q2/tiles.dzi", "teapot/tiles.dzi", "t2/tiles.dzi", "f1/tiles.dzi", "f2/tiles.dzi", "w1/tiles.dzi", "w2/tiles.dzi"],
+      showNavigator: true,
+      sequenceMode: true,
+    });
+  </script>
+</body>
