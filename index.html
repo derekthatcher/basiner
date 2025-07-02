@@ -17,6 +17,7 @@
 
     body {
       margin: 0;
+      font-family: Barlow;
     }
 
     #header {
@@ -32,23 +33,88 @@
     ul {
       list-style: none;
       margin-top: 0px;
-    padding-left: 0;
+      padding-left: 0;
+      margin-bottom: 1px;
     }
 
     ul li {
       display: inline-block;
       background-color: black;
       color: white;
-      width: 18px;
-    height: 18px;
-    text-align: center;
+      width: 19px;
+      height: 19px;
+      text-align: center;
+      margin-bottom: 3px;
+    }
+
+    /* Sidebar Menu Styling */
+    #sidebar-menu {
+      width: 130px;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+      background-color: #000;
+    }
+
+    /* "Images" toggle button styling */
+    #toggle-images-menu {
+      background-color: #000;
+      color: white;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      font-family: Barlow;
+      transition: background-color 0.2s ease;
+      padding: 4px;
+    }
+
+    #toggle-images-menu:hover {
+      background-color: #111;
+      /* Darker blue on hover */
+    }
+
+    /* Container for the list of image links */
+    #image-links-container {
+      margin-top: 0.5rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.2rem;
+      transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #image-links-container.open {
+      display: flex;
+      max-height: 500px;
+      opacity: 1;
+    }
+
+    /* Styling for individual image links */
+    .image-link-item {
+      color: #ecf0f1;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.9rem;
+    }
+
+    .image-link-item:hover {
+      background-color: #333;
+      color: #ffffff;
     }
   </style>
 </head>
 
 <body>
   <div id="header">
-    <img src="chb.png" width="129px">
+    <img src="chb.png" width="131px">
     <ul>
       <li id="out" alt="zoom out">-</li>
       <li id="in">+</li>
@@ -58,15 +124,40 @@
         < </li>
       <li id="next">></li>
     </ul>
+
+    <div id="sidebar-menu">
+      <button id="toggle-images-menu">Links</button>
+      <div id="image-links-container">
+        <!-- Image links will be dynamically inserted here by JavaScript -->
+      </div>
+    </div>
   </div>
   <div id="seadragon-viewer"></div>
   <script src="//openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
   <script>
+    let imageList = [
+      { url: "kuratawhiti/tiles.dzi", title: "Kura Tawhiti" },
+      { url: "q2/tiles.dzi", title: "Quantum Field" },
+      { url: "teapot/tiles.dzi", title: "The Teapot" },
+      { url: "t2/tiles.dzi", title: "The Teapot 2" },
+      { url: "t3/t3.dzi", title: "The Teapot 3" },
+      { url: "t4/t4.dzi", title: "The Teapot 4" },
+      { url: "f1/tiles.dzi", title: "Flock Hill 1" },
+      { url: "f2/tiles.dzi", title: "Flock Hill 2" },
+      { url: "f3/f3.dzi", title: "Flock Hill 3" },
+      { url: "f4/f4.dzi", title: "Flock Hill 4" },
+      { url: "f5/f5.dzi", title: "Flock Hill 5" },
+      { url: "d1/d1.dzi", title: "Dry Valley" },
+      { url: "w1/tiles.dzi", title: "Wuthering Heights 1" },
+      { url: "w2/tiles.dzi", title: "Wuthering Heights 2" },
+      { url: "w3/tiles.dzi", title: "Annie Oakley" },
+      { url: "village/tiles.dzi", title: "Castle Hill Village" }
+    ];
 
     var viewer = OpenSeadragon({
       id: "seadragon-viewer",
       prefixUrl: "//openseadragon.github.io/openseadragon/images/",
-      tileSources: ["kuratawhiti/tiles.dzi", "q2/tiles.dzi", "teapot/tiles.dzi", "t2/tiles.dzi", "t3/t3.dzi", "t4/t4.dzi", "f1/tiles.dzi", "f2/tiles.dzi", "f3/f3.dzi", "f4/f4.dzi", "f5/f5.dzi", "d1/d1.dzi", "w1/tiles.dzi", "w2/tiles.dzi", "w3/tiles.dzi", "village/tiles.dzi"],
+      tileSources: imageList.map(source => source.url),
       showNavigator: true,
       sequenceMode: true,
       zoomInButton: "in",
@@ -77,5 +168,28 @@
       previousButton: "previous",
     });
 
+    // Get references to menu elements
+    const toggleButton = document.getElementById('toggle-images-menu');
+    const imageLinksContainer = document.getElementById('image-links-container');
+
+    // Dynamically create image links
+    imageList.forEach((image, index) => {
+      const linkItem = document.createElement('div');
+      linkItem.className = 'image-link-item';
+      linkItem.textContent = image.title;
+      linkItem.dataset.index = index; // Store the index for navigation
+
+      linkItem.addEventListener('click', () => {
+        viewer.goToPage(index);
+        // Optionally close the menu after clicking a link
+        imageLinksContainer.classList.remove('open');
+      });
+      imageLinksContainer.appendChild(linkItem);
+    });
+
+    // Toggle visibility of image links on button click
+    toggleButton.addEventListener('click', () => {
+      imageLinksContainer.classList.toggle('open');
+    });
   </script>
 </body>
