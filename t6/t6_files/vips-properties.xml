@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
-<image xmlns="http://www.vips.ecs.soton.ac.uk//dzsave" date="2026-01-23T16:28:59.152839+13" version="8.17.0">
+<image xmlns="http://www.vips.ecs.soton.ac.uk//dzsave" date="2026-01-23T19:52:40.182887+13" version="8.17.0">
   <properties>
     <property>
       <name>width</name>
-      <value type="gint">27381</value>
+      <value type="gint">27111</value>
     </property>
     <property>
       <name>height</name>
-      <value type="gint">10699</value>
+      <value type="gint">10293</value>
     </property>
     <property>
       <name>bands</name>
@@ -71,7 +71,7 @@
     </property>
     <property>
       <name>exif-ifd0-DateTime</name>
-      <value type="VipsRefString">2026:01:23 15:47:08 (2026:01:23 15:47:08, ASCII, 20 components, 20 bytes)</value>
+      <value type="VipsRefString">2026:01:23 18:38:29 (2026:01:23 18:38:29, ASCII, 20 components, 20 bytes)</value>
     </property>
     <property>
       <name>exif-ifd0-Artist</name>
