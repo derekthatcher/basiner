@@ -135,11 +135,14 @@
   <div id="seadragon-viewer"></div>
   <script src="//openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
   <script>
+    // 1. Helper to turn titles into URL-friendly "slugs"
+    const slugify = (text) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+
     // run vips dzsave input_image.png output_tiles
     let imageList = [
       { url: "kuratawhiti/tiles.dzi", title: "Kura Tawhiti" },
       { url: "q2/tiles.dzi", title: "Quantum Field" },
-      { url: "q3/q3.dzi", title: "Kura Tawhiti" },
+      { url: "q3/q3.dzi", title: "Kura Tawhiti 2" },
       { url: "s1/s1.dzi", title: "Spittle Hill" },
       { url: "teapot/tiles.dzi", title: "The Teapot" },
       { url: "t2/tiles.dzi", title: "The Teapot 2" },
@@ -161,10 +164,18 @@
       { url: "village/tiles.dzi", title: "Castle Hill Village" }
     ];
 
+    // 2. Check the URL on load to see if a specific image is requested
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialSlug = urlParams.get('img');
+    console.log(initialSlug);
+    let initialPageIndex = imageList.findIndex(img => slugify(img.title) === initialSlug);
+    if (initialPageIndex === -1) initialPageIndex = 0; // Default to first image
+
     var viewer = OpenSeadragon({
       id: "seadragon-viewer",
       prefixUrl: "//openseadragon.github.io/openseadragon/images/",
       tileSources: imageList.map(source => source.url),
+      initialPage: initialPageIndex, // Start at the URL-specified image
       showNavigator: true,
       sequenceMode: true,
       zoomInButton: "in",
@@ -173,6 +184,16 @@
       fullPageButton: "full",
       nextButton: "next",
       previousButton: "previous",
+    });
+
+    // 3. Update the URL whenever the page changes
+    viewer.addHandler('page', function(event) {
+      const currentImage = imageList[event.page];
+      const newSlug = slugify(currentImage.title);
+      
+      // Update the URL without reloading the page
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?img=' + newSlug;
+      window.history.replaceState({ path: newUrl }, '', newUrl);
     });
 
     // Get references to menu elements
