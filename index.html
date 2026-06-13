@@ -110,6 +110,32 @@
       background-color: #333;
       color: #ffffff;
     }
+    /* Submenu Category Header */
+.menu-category-title {
+  color: #a0a0a0;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.menu-category-title:hover {
+  color: #ffffff;
+}
+
+/* Submenu container holding child links */
+.menu-category-content {
+  flex-direction: column;
+  padding-left: 10px;
+  border-left: 1px solid #333;
+  margin-bottom: 0.3rem;
+}
+
+/* Custom spacing for nested items */
+.image-link-item.sub-item {
+  font-size: 0.85rem;
+  padding: 0.15rem 0.5rem;
+}
   </style>
 </head>
 
@@ -145,6 +171,8 @@
       { url: "q2/tiles.dzi", title: "Kura Tawhiti 2" },
       { url: "q3/q3.dzi", title: "Kura Tawhiti 3" },
       { url: "q4/q4.dzi", title: "Kura Tawhiti 4" },
+      { url: "q5/q5.dzi", title: "Kura Tawhiti 5" },
+      { url: "q5/q6.dzi", title: "Kura Tawhiti 6" },
       { url: "s1/s1.dzi", title: "Spittle Hill" },
       { url: "teapot/tiles.dzi", title: "The Teapot" },
       { url: "t2/tiles.dzi", title: "The Teapot 2" },
@@ -204,24 +232,77 @@
     const toggleButton = document.getElementById('toggle-images-menu');
     const imageLinksContainer = document.getElementById('image-links-container');
 
-    // Dynamically create image links
-    imageList.forEach((image, index) => {
-      const linkItem = document.createElement('div');
-      linkItem.className = 'image-link-item';
-      linkItem.textContent = image.title;
-      linkItem.dataset.index = index; // Store the index for navigation
+// 1. Group images by their base area name (e.g., "Flock Hill")
+const groups = {};
+imageList.forEach((image, index) => {
+  // Extract base name (removes trailing numbers, like "Flock Hill 3" -> "Flock Hill")
+  const baseName = image.title.replace(/\s+\d+$/, '');
+  
+  if (!groups[baseName]) {
+    groups[baseName] = [];
+  }
+  groups[baseName].push({ ...image, index });
+});
 
-      linkItem.addEventListener('click', () => {
-        viewer.goToPage(index);
-        // Optionally close the menu after clicking a link
+// 2. Dynamically build the grouped submenu DOM
+Object.keys(groups).forEach(groupName => {
+  const groupItems = groups[groupName];
+
+  // If there's only one item in the group, render it as a direct link
+  if (groupItems.length === 1) {
+    const linkItem = document.createElement('div');
+    linkItem.className = 'image-link-item';
+    linkItem.textContent = groupItems[0].title;
+    linkItem.addEventListener('click', () => {
+      viewer.goToPage(groupItems[0].index);
+      imageLinksContainer.classList.remove('open');
+    });
+    imageLinksContainer.appendChild(linkItem);
+  } else {
+    // Otherwise, create an expandable nested category
+    const categoryWrap = document.createElement('div');
+    categoryWrap.className = 'menu-category-wrap';
+
+    const categoryTitle = document.createElement('div');
+    categoryTitle.className = 'menu-category-title';
+    categoryTitle.textContent = groupName + ' ▾';
+    
+    const categoryContent = document.createElement('div');
+    categoryContent.className = 'menu-category-content';
+    categoryContent.style.display = 'none'; // Hidden by default
+
+    // Toggle sub-menu visibility
+    categoryTitle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = categoryContent.style.display === 'none';
+      categoryContent.style.display = isHidden ? 'flex' : 'none';
+      categoryTitle.textContent = groupName + (isHidden ? ' ▴' : ' ▾');
+    });
+
+    // Populate sub-menu items
+    groupItems.forEach(item => {
+      const subItem = document.createElement('div');
+      subItem.className = 'image-link-item sub-item';
+      // Just show the number or sub-destination name for cleaner UI
+      subItem.textContent = item.title.replace(groupName, '').trim() || item.title;
+      
+      subItem.addEventListener('click', () => {
+        viewer.goToPage(item.index);
         imageLinksContainer.classList.remove('open');
       });
-      imageLinksContainer.appendChild(linkItem);
+      categoryContent.appendChild(subItem);
     });
 
-    // Toggle visibility of image links on button click
-    toggleButton.addEventListener('click', () => {
-      imageLinksContainer.classList.toggle('open');
-    });
+    categoryWrap.appendChild(categoryTitle);
+    categoryWrap.appendChild(categoryContent);
+    imageLinksContainer.appendChild(categoryWrap);
+  }
+});
+
+// Toggle global menu visibility
+toggleButton.addEventListener('click', () => {
+  imageLinksContainer.classList.toggle('open');
+});
+
   </script>
 </body>
